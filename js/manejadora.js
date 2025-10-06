@@ -245,8 +245,6 @@ function validarFormulario(form, mensajes) {
 function generarMensajeError(campo, mensajes) {
   const id = campo.id;
   const divError = document.getElementById("error-" + id);
-  console.log("Buscando mensajes para:", id);
-  console.log("Mensajes disponibles:", Object.keys(mensajes));
 
   if (!divError) console.warn("No se encontró el div de error para:", id);
   if (!mensajes[id]) console.warn("No hay mensajes definidos para:", id);
@@ -283,3 +281,4 @@ function mostrarSpinner() {
 function ocultarSpinner() {
   document.getElementById("spinner").style.display = "none";
 }
+
