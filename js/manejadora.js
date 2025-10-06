@@ -1,24 +1,45 @@
 
 document.addEventListener("DOMContentLoaded", () => {
     const mensajes = {
-        inputMarca: {
-            valueMissing: "La marca es obligatoria.",
-        },
-        inputPrecio: {
-            valueMissing: "El precio es obligatorio.",
-            rangeUnderflow: (c) => `El precio mínimo es ${c.min} USD.`,
-            rangeOverflow: (c) => `El precio máximo es ${c.max} USD.`,
-        },
-        inputCantidad: {
-            valueMissing: "La cantidad es obligatoria.",
-            rangeUnderflow: (c) => `La cantidad mínima es ${c.min}.`,
-            rangeOverflow: (c) => `La cantidad máxima es ${c.max}.`,
-        },
-        inputColor: {
-            valueMissing: "El color es obligatorio.",
-        },
+      inputID: {
+        valueMissing: "El ID es obligatorio."
+      },
+      inputMarca: {
+        valueMissing: "La marca es obligatoria."
+      },
+      inputPrecio: {
+        valueMissing: "El precio es obligatorio.",
+        rangeUnderflow: c => `El precio mínimo es ${c.min} USD.`,
+        rangeOverflow: c => `El precio máximo es ${c.max} USD.`
+      },
+      inputCantidad: {
+        valueMissing: "La cantidad es obligatoria.",
+        rangeUnderflow: c => `La cantidad mínima es ${c.min}.`,
+        rangeOverflow: c => `La cantidad máxima es ${c.max}.`
+      },
+      inputColor: {
+        valueMissing: "El color es obligatorio."
+      }
     };
+
     const formulario = document.getElementById("frmFormulario");
+    
+    formulario.querySelectorAll(".form-control").forEach(campo => {
+      campo.addEventListener("input", () => {
+        const esValido = campo.checkValidity();
+
+        campo.classList.toggle("is-valid", esValido);
+        campo.classList.toggle("is-invalid", !esValido);
+
+        if (!esValido) {
+          generarMensajeError(campo, mensajes); 
+        } else {
+          const divError = document.getElementById("error-" + campo.id);
+          if (divError) divError.textContent = "";
+        }
+      });
+    });
+    
     document.getElementById("btnAgregar").addEventListener("click", async () => {
         if (!validarFormulario(formulario, mensajes)) return;
         await enviarPintura("POST");
@@ -224,6 +245,12 @@ function validarFormulario(form, mensajes) {
 function generarMensajeError(campo, mensajes) {
   const id = campo.id;
   const divError = document.getElementById("error-" + id);
+  console.log("Buscando mensajes para:", id);
+  console.log("Mensajes disponibles:", Object.keys(mensajes));
+
+  if (!divError) console.warn("No se encontró el div de error para:", id);
+  if (!mensajes[id]) console.warn("No hay mensajes definidos para:", id);
+
   if (!divError || !mensajes[id]) return;
 
   for (const error in campo.validity) {
